@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nederlandse Luisteroefening — Les 3 & Les 4</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+    padding: 32px 16px 60px;
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+  .container { max-width: 820px; margin: 0 auto; }
+  h1 { color: #1a7a3e; font-size: 28px; margin-bottom: 6px; }
+  .subtitle { color: #666; margin-bottom: 24px; font-size: 15px; }
+
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e0e0e0;
+  }
+  .tab {
+    background: none;
+    border: none;
+    padding: 12px 22px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #888;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    font-family: inherit;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab:hover { color: #1a7a3e; }
+  .tab.active { color: #1a7a3e; border-bottom-color: #1a7a3e; }
+
+  .lesson { display: none; }
+  .lesson.active { display: block; }
+  .lesson h2 {
+    color: #1a7a3e;
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .lesson .lesson-intro {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 18px;
+    background: #fff8e1;
+    border-left: 4px solid #f0b400;
+    padding: 10px 14px;
+    border-radius: 4px;
+  }
+  .controls-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .speed-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .speed-group label { font-size: 13px; color: #555; }
+  .speed-group select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-family: inherit;
+    font-size: 13px;
+    background: #fff;
+  }
+  .reset-btn {
+    background: #fff;
+    color: #1a7a3e;
+    border: 2px solid #1a7a3e;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .reset-btn:hover { background: #f0f8f3; }
+
+  .line {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: box-shadow 0.15s;
+  }
+  .line.correct { border-left: 4px solid #1a7a3e; }
+  .line.incorrect { border-left: 4px solid #d63638; }
+
+  .speaker {
+    display: inline-block;
+    background: #e8f3ec;
+    color: #1a7a3e;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 2px 9px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+  .speaker.b { background: #fff0e0; color: #b85a00; }
+
+  .row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .play-btn {
+    background: #1a7a3e;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    font-size: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .play-btn:hover:not(:disabled) { background: #15642f; }
+  .play-btn:active:not(:disabled) { transform: scale(0.93); }
+  .play-btn:disabled { background: #bbb; cursor: not-allowed; }
+
+  .input-wrap {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    gap: 8px;
+  }
+  input[type="text"] {
+    flex: 1;
+    padding: 10px 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: inherit;
+    transition: border-color 0.15s;
+    min-width: 0;
+  }
+  input[type="text"]:focus { outline: none; border-color: #1a7a3e; }
+  input[type="text"]:disabled { background: #f8f8f8; color: #444; }
+
+  .check-btn {
+    background: #1a7a3e;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .check-btn:hover:not(:disabled) { background: #15642f; }
+  .check-btn:disabled { background: #bbb; cursor: not-allowed; }
+
+  .status {
+    font-size: 12px;
+    color: #888;
+    margin-top: 6px;
+    margin-left: 52px;
+    font-style: italic;
+  }
+
+  .feedback {
+    margin-top: 10px;
+    margin-left: 52px;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .icon.correct { background: #1a7a3e; }
+  .icon.incorrect { background: #d63638; }
+  .user-text { font-size: 15px; color: #333; }
+  .wrong-word { color: #d63638; font-weight: 600; }
+  .correct-text {
+    font-size: 14px;
+    color: #1a7a3e;
+    margin-top: 2px;
+    margin-left: 28px;
+  }
+
+  .progress {
+    background: #fff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #555;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .progress-bar {
+    height: 6px;
+    background: #e8e8e8;
+    border-radius: 3px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #1a7a3e;
+    width: 0%;
+    transition: width 0.3s;
+  }
+  .voice-warning {
+    background: #fdeaea;
+    color: #b00020;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    display: none;
+  }
+  .voice-warning.show { display: block; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Nederlandse Luisteroefening</h1>
+    <p class="subtitle">Luister naar elke zin en typ wat je hoort. Eén keer luisteren per poging.</p>
+
+    <div class="voice-warning" id="voiceWarning">
+      ⚠ Geen Nederlandse stem gevonden in je browser. Het kan zijn dat de audio niet goed klinkt. Probeer Chrome of Edge voor een Nederlandse stem.
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-target="les3">Les 3 — Welke dag is het vandaag?</button>
+      <button class="tab" data-target="les4">Les 4 — De Nederlandse les</button>
+    </div>
+
+    <!-- LES 3 -->
+    <div class="lesson active" id="les3">
+      <h2>Les 3 — Welke dag is het vandaag?</h2>
+      <p class="lesson-intro">Dialoog tussen vraag (A) en antwoord (B). Klik ▶ om de zin te horen, typ hem in, en klik op Controleer.</p>
+      <div class="controls-bar">
+        <div class="speed-group">
+          <label for="speed-les3">Snelheid:</label>
+          <select id="speed-les3" class="speed-select">
+            <option value="0.85">Langzaam</option>
+            <option value="1.0" selected>Normaal</option>
+            <option value="1.15">Sneller</option>
+          </select>
+        </div>
+        <button class="reset-btn" data-reset="les3">Begin opnieuw</button>
+      </div>
+      <div class="progress">
+        <span><span class="progress-count">0</span> van <span class="progress-total">0</span> goed</span>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+      </div>
+      <div class="lines"></div>
+    </div>
+
+    <!-- LES 4 -->
+    <div class="lesson" id="les4">
+      <h2>Les 4 — De Nederlandse les</h2>
+      <p class="lesson-intro">Dialoog tussen vraag (A) en antwoord (B). Klik ▶ om de zin te horen, typ hem in, en klik op Controleer.</p>
+      <div class="controls-bar">
+        <div class="speed-group">
+          <label for="speed-les4">Snelheid:</label>
+          <select id="speed-les4" class="speed-select">
+            <option value="0.85">Langzaam</option>
+            <option value="1.0" selected>Normaal</option>
+            <option value="1.15">Sneller</option>
+          </select>
+        </div>
+        <button class="reset-btn" data-reset="les4">Begin opnieuw</button>
+      </div>
+      <div class="progress">
+        <span><span class="progress-count">0</span> van <span class="progress-total">0</span> goed</span>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+      </div>
+      <div class="lines"></div>
+    </div>
+  </div>
+
+<script>
+  // ---------- DIALOGUE DATA ----------
+  const dialogues = {
+    les3: [
+      { s: 'A', t: 'Welke dag is het vandaag?' },
+      { s: 'B', t: 'Het is vandaag dinsdag.' },
+      { s: 'B', t: 'Gisteren was het maandag.' },
+      { s: 'B', t: 'En morgen is het woensdag.' },
+      { s: 'B', t: 'Na woensdag volgen donderdag en vrijdag.' },
+      { s: 'B', t: 'De laatste twee dagen van de week zijn zaterdag en zondag.' },
+      { s: 'B', t: 'Dan is het weekend.' },
+      { s: 'A', t: 'Wanneer werken de meeste mensen?' },
+      { s: 'B', t: 'Van maandag tot en met vrijdag.' },
+      { s: 'B', t: 'De meeste mensen zijn in het weekend vrij.' },
+      { s: 'B', t: 'We werken dan meestal niet.' },
+      { s: 'B', t: 'We gaan dan naar familie.' },
+      { s: 'B', t: 'Of we gaan naar buiten met de kinderen.' },
+      { s: 'B', t: 'We hebben ook tijd om boodschappen te doen.' },
+      { s: 'B', t: 'Of andere leuke dingen, bijvoorbeeld Nederlands leren.' },
+      { s: 'A', t: 'Op welke dagen zijn de winkels open?' },
+      { s: 'B', t: 'De meeste winkels zijn op maandag tot en met zaterdag open.' },
+      { s: 'B', t: 'En veel winkels ook op zondag.' },
+      { s: 'B', t: 'Op maandagmorgen zijn veel winkels dicht.' },
+      { s: 'B', t: 'Mensen die in een winkel werken zijn dus meestal niet in het weekend vrij.' },
+      { s: 'B', t: 'Ze hebben op een andere dag vrij, bijvoorbeeld op maandag.' },
+      { s: 'A', t: 'Zijn scholen in het weekend dicht?' },
+      { s: 'B', t: 'Ja, alle scholen zijn dicht in het weekend.' },
+      { s: 'B', t: 'In het weekend hebben kinderen geen les.' },
+      { s: 'B', t: 'Kinderen tot twaalf jaar hebben meestal ook vrij op woensdagmiddag.' },
+      { s: 'B', t: 'En ze hebben zes weken vrij in de zomer.' },
+      { s: 'A', t: 'Hoe is dat in jullie land?' },
+    ],
+    les4: [
+      { s: 'A', t: 'Welke talen spreek je, Paula?' },
+      { s: 'B', t: 'Engels, Frans en een beetje Nederlands.' },
+      { s: 'B', t: 'Ik spreek Nederlands in de les en in de winkel.' },
+      { s: 'B', t: 'Maar op mijn werk spreken we Engels.' },
+      { s: 'A', t: 'Maar waarom leer je dan Nederlands?' },
+      { s: 'A', t: 'Waarom doe je deze cursus?' },
+      { s: 'B', t: 'Nederlands is belangrijk.' },
+      { s: 'B', t: 'Ik wil hier studeren en werken.' },
+      { s: 'A', t: 'Is Nederlands een moeilijke taal?' },
+      { s: 'B', t: 'Nee, Nederlands is niet moeilijk.' },
+      { s: 'B', t: 'Het is een makkelijke taal.' },
+      { s: 'B', t: 'En de docent spreekt langzaam en duidelijk.' },
+      { s: 'B', t: 'Alle talen zijn makkelijk.' },
+      { s: 'B', t: 'Mijn dochter is zes jaar en spreekt al goed Nederlands.' },
+      { s: 'A', t: 'En hoe leer jij Nederlands?' },
+      { s: 'B', t: 'Ik luister goed naar de teksten van het Groene Boek.' },
+      { s: 'A', t: 'Wanneer heb je les?' },
+      { s: 'A', t: 'Hoeveel keer per week?' },
+      { s: 'B', t: 'Ik heb vier keer per week les.' },
+      { s: 'B', t: 'Elke dag behalve vrijdag.' },
+      { s: 'A', t: 'Dat is veel! Wat is je rooster?' },
+      { s: 'B', t: 'Ik zit in groep A.' },
+      { s: 'B', t: 'Groep A begint \u2019s ochtends om negen uur.' },
+      { s: 'B', t: 'En \u2019s middags om \u00e9\u00e9n uur.' },
+      { s: 'B', t: 'Elke les duurt \u00e9\u00e9n uur.' },
+      { s: 'B', t: '\u2019s Ochtends hebben we les van negen tot tien uur.' },
+      { s: 'B', t: 'En \u2019s middags hebben we les van \u00e9\u00e9n tot twee uur.' },
+      { s: 'B', t: 'Wij hebben les in B25.' },
+      { s: 'A', t: 'En wat doen jullie na de lessen en \u2019s avonds?' },
+      { s: 'B', t: 'Leren, leren, leren!' },
+      { s: 'B', t: 'We leren dan de teksten voor de volgende dag.' },
+      { s: 'B', t: 'We hebben twee teksten per dag, soms drie.' },
+      { s: 'A', t: 'En in het weekend?' },
+      { s: 'B', t: 'In het weekend hebben we geen les.' },
+      { s: 'B', t: 'We leren dan voor maandag.' },
+      { s: 'B', t: 'Iedereen heeft dan vrij, behalve wij!' },
+    ],
+  };
+
+  // ---------- VOICE SETUP ----------
+  let dutchVoice = null;
+
+  function pickVoice() {
+    if (!('speechSynthesis' in window)) return;
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices.length) return;
+    dutchVoice =
+      voices.find(v => v.lang === 'nl-NL' && /google|microsoft|premium|enhanced/i.test(v.name)) ||
+      voices.find(v => v.lang === 'nl-NL') ||
+      voices.find(v => v.lang && v.lang.toLowerCase().startsWith('nl')) ||
+      null;
+    if (!dutchVoice) {
+      document.getElementById('voiceWarning').classList.add('show');
+    } else {
+      document.getElementById('voiceWarning').classList.remove('show');
+    }
+  }
+
+  if ('speechSynthesis' in window) {
+    pickVoice();
+    window.speechSynthesis.onvoiceschanged = pickVoice;
+    setTimeout(pickVoice, 250);
+  } else {
+    document.getElementById('voiceWarning').textContent = '⚠ Je browser ondersteunt geen spraak. Probeer Chrome of Edge.';
+    document.getElementById('voiceWarning').classList.add('show');
+  }
+
+  function speak(text, rate) {
+    return new Promise((resolve, reject) => {
+      if (!('speechSynthesis' in window)) {
+        reject(new Error('No speech support'));
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'nl-NL';
+      if (dutchVoice) u.voice = dutchVoice;
+      u.rate = rate || 1.0;
+      u.pitch = 1.0;
+      u.volume = 1.0;
+      u.onend = () => resolve();
+      u.onerror = (e) => reject(e);
+      window.speechSynthesis.speak(u);
+    });
+  }
+
+  // ---------- COMPARISON ----------
+  function normalize(s) {
+    return s
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u201A\u201B\u2032]/g, "'")
+      .replace(/[\u201C\u201D\u201E\u201F\u2033]/g, '"')
+      .replace(/[.,!?;:'"„""]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function renderUserAnswer(userText, correctText) {
+    const userWords = userText.trim().split(/\s+/);
+    const correctWords = correctText.trim().split(/\s+/);
+    return userWords.map((w, i) => {
+      const cw = correctWords[i] || '';
+      const ok = normalize(w) === normalize(cw);
+      const safe = w.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return ok ? `<span>${safe}</span>` : `<span class="wrong-word">${safe}</span>`;
+    }).join(' ');
+  }
+
+  // ---------- RENDER LESSON ----------
+  function renderLesson(lessonId) {
+    const lessonEl = document.getElementById(lessonId);
+    const linesContainer = lessonEl.querySelector('.lines');
+    const speedSelect = lessonEl.querySelector('.speed-select');
+    const data = dialogues[lessonId];
+
+    linesContainer.innerHTML = '';
+    lessonEl.querySelector('.progress-total').textContent = data.length;
+    lessonEl.querySelector('.progress-count').textContent = '0';
+    lessonEl.querySelector('.progress-fill').style.width = '0%';
+
+    const state = { correctCount: 0 };
+
+    data.forEach((entry, idx) => {
+      const lineEl = document.createElement('div');
+      lineEl.className = 'line';
+      lineEl.innerHTML = `
+        <span class="speaker ${entry.s === 'B' ? 'b' : ''}">${entry.s === 'A' ? 'Vraag (A)' : 'Antwoord (B)'} · ${idx + 1}</span>
+        <div class="row">
+          <button class="play-btn" aria-label="Speel zin ${idx + 1}">▶</button>
+          <div class="input-wrap">
+            <input type="text" placeholder="Typ hier wat je hoort..." autocomplete="off" spellcheck="false" disabled />
+            <button class="check-btn" disabled>Controleer</button>
+          </div>
+        </div>
+        <div class="status">Klik ▶ om te luisteren (1× per poging)</div>
+        <div class="feedback"></div>
+      `;
+      linesContainer.appendChild(lineEl);
+
+      const playBtn = lineEl.querySelector('.play-btn');
+      const input = lineEl.querySelector('input');
+      const checkBtn = lineEl.querySelector('.check-btn');
+      const status = lineEl.querySelector('.status');
+      const feedback = lineEl.querySelector('.feedback');
+
+      let played = false;
+      let locked = false;
+      let counted = false;
+
+      playBtn.addEventListener('click', async () => {
+        if (played || locked) return;
+        played = true;
+        playBtn.disabled = true;
+        input.disabled = false;
+        checkBtn.disabled = false;
+        status.textContent = '🔊 Aan het afspelen...';
+        input.focus();
+        try {
+          await speak(entry.t, parseFloat(speedSelect.value));
+          status.textContent = 'Audio afgespeeld. Typ je antwoord en klik op Controleer.';
+        } catch {
+          status.textContent = '⚠ Audio mislukt. Controleer je browserinstellingen.';
+        }
+      });
+
+      function check() {
+        if (locked) return;
+        const userText = input.value.trim();
+        if (!userText) return;
+        locked = true;
+        input.disabled = true;
+        checkBtn.disabled = true;
+
+        const ok = normalize(userText) === normalize(entry.t);
+        lineEl.classList.remove('correct', 'incorrect');
+        lineEl.classList.add(ok ? 'correct' : 'incorrect');
+        feedback.classList.add('show');
+
+        const userRendered = ok
+          ? userText.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          : renderUserAnswer(userText, entry.t);
+
+        feedback.innerHTML = `
+          <div class="feedback-row">
+            <span class="icon ${ok ? 'correct' : 'incorrect'}">${ok ? '✓' : '✗'}</span>
+            <span class="user-text">${userRendered}</span>
+          </div>
+          ${!ok ? `<div class="correct-text">${entry.t}</div>` : ''}
+          <button class="retry-line" style="margin-top:8px; padding:4px 12px; font-size:13px; background:#fff; color:#1a7a3e; border:2px solid #1a7a3e; border-radius:6px; font-weight:600; cursor:pointer; font-family:inherit;">Opnieuw proberen</button>
+        `;
+
+        if (ok && !counted) {
+          counted = true;
+          state.correctCount += 1;
+          updateProgress();
+        }
+
+        feedback.querySelector('.retry-line').addEventListener('click', () => {
+          played = false;
+          locked = false;
+          input.value = '';
+          input.disabled = true;
+          checkBtn.disabled = true;
+          playBtn.disabled = false;
+          status.textContent = 'Klik ▶ om te luisteren (1× per poging)';
+          lineEl.classList.remove('correct', 'incorrect');
+          feedback.classList.remove('show');
+          feedback.innerHTML = '';
+        });
+      }
+
+      checkBtn.addEventListener('click', check);
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+    });
+
+    function updateProgress() {
+      lessonEl.querySelector('.progress-count').textContent = state.correctCount;
+      const pct = (state.correctCount / data.length) * 100;
+      lessonEl.querySelector('.progress-fill').style.width = pct + '%';
+    }
+  }
+
+  // ---------- TABS ----------
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.lesson').forEach(l => l.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.target).classList.add('active');
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    });
+  });
+
+  // ---------- RESET ----------
+  document.querySelectorAll('.reset-btn[data-reset]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      renderLesson(btn.dataset.reset);
+    });
+  });
+
+  // ---------- INIT ----------
+  renderLesson('les3');
+  renderLesson('les4');
+</script>
+</body>
+</html>
